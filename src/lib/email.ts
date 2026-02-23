@@ -1,7 +1,8 @@
 import { Resend } from "resend";
+import { ENV } from "@/config/env";
 
-const resendApiKey = process.env.RESEND_API_KEY;
-const fromEmail = process.env.EMAIL_FROM || "Turisteando Ciudades <no-reply@turisteando.app>";
+const resendApiKey = ENV.RESEND_API_KEY;
+const fromEmail = ENV.EMAIL_FROM;
 
 export type PurchaseKind = "city" | "all" | "lifetime";
 

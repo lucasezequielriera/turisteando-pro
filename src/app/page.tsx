@@ -5,6 +5,10 @@ import { CITIES } from "@/data/cities";
 import CityCard from "@/components/CityCard";
 import PreferenceFilters from "@/components/PreferenceFilters";
 import Pagination from "@/components/Pagination";
+import PaymentModal from "@/components/PaymentModal";
+import { usePaymentModal } from "@/hooks/usePaymentModal";
+import { useCurrency } from "@/contexts/CurrencyContext";
+import AccesoTotalButton from "@/components/AccesoTotalButton";
 
 const CARDS_PER_PAGE = 6;
 
@@ -13,6 +17,8 @@ export default function HomePage() {
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
   const [selectedPreferences, setSelectedPreferences] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const { isOpen, modalData, openModal, closeModal } = usePaymentModal();
+  const { getDisplayPrice } = useCurrency();
 
   const results = useMemo(() => {
     // Si no hay país específico Y no hay preferencias, no mostrar nada
@@ -92,12 +98,12 @@ export default function HomePage() {
               Info accionable: dónde trabajar, cuánto gastar, eSIM, bancos y barrios. Sin humo, todo al grano.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <Link
-                href="/buy/all"
-                className="rounded-xl bg-emerald-400 px-6 py-3 font-semibold text-slate-900 hover:bg-emerald-300 transition-colors"
-              >
-                Acceso total (€9/mes)
-              </Link>
+              <AccesoTotalButton onClick={() => openModal({
+                mode: "world",
+                title: "Pack Mundo",
+                price: 9,
+                description: "Desbloquea todo el contenido disponible (suscripción mensual)"
+              })} />
               <Link
                 href="/pricing"
                 className="rounded-xl border border-slate-600 px-6 py-3 font-semibold text-slate-200 hover:bg-slate-800 transition-colors"
@@ -321,6 +327,19 @@ export default function HomePage() {
           © 2025 Turisteando Ciudades · Info orientativa · Algunos enlaces pueden ser de afiliado.
         </div>
       </footer>
+
+      {/* Payment Modal */}
+      {modalData && (
+        <PaymentModal
+          isOpen={isOpen}
+          onClose={closeModal}
+          mode={modalData.mode}
+          city={modalData.city}
+          title={modalData.title}
+          price={modalData.price}
+          description={modalData.description}
+        />
+      )}
     </div>
   );
 }

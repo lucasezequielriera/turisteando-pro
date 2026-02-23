@@ -4,7 +4,7 @@ import { useState } from "react";
 export default function NewsletterForm() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle"|"ok"|"err">("idle");
-  const endpoint = process.env.NEXT_PUBLIC_NEWSLETTER_ENDPOINT || "#";
+  const endpoint = "#";
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();

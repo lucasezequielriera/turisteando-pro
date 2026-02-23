@@ -1,7 +1,7 @@
 import { CITIES } from "@/data/cities";
 
 export default function sitemap() {
-  const base = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  const base = "https://www.turisteandociudades.com";
   const staticRoutes = ["", "/pricing", "/faq"].map((p) => ({
     url: `${base}${p || "/"}`, lastModified: new Date().toISOString(),
   }));

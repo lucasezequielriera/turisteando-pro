@@ -2,10 +2,11 @@ import Stripe from "stripe";
 import { NextResponse } from "next/server";
 import { supabaseService } from "@/lib/supabase/server";
 import { sendPurchaseEmail } from "@/lib/email";
+import { ENV } from "@/config/env";
 
 export const runtime = "nodejs"; // usar body raw
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+const stripe = new Stripe(ENV.STRIPE_SECRET_KEY);
 
 export async function POST(req: Request) {
   const sig = req.headers.get("stripe-signature");
@@ -13,7 +14,7 @@ export async function POST(req: Request) {
 
   let event: Stripe.Event;
   try {
-    event = stripe.webhooks.constructEvent(body, sig!, process.env.STRIPE_WEBHOOK_SECRET!);
+    event = stripe.webhooks.constructEvent(body, sig!, ENV.STRIPE_WEBHOOK_SECRET);
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);
     return new NextResponse(`Webhook Error: ${message}`, { status: 400 });

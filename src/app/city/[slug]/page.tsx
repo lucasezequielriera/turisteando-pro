@@ -12,7 +12,7 @@ export async function generateMetadata(
   if (!city) return { title: "Ciudad no encontrada" };
   const title = `${city.name} — Guía para nómadas (cowork, eSIM, presupuesto)`;
   const description = city.summary;
-  const base = new URL(process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000");
+  const base = new URL("https://www.turisteandociudades.com");
   const url = new URL(`/city/${city.slug}`, base).toString();
   return {
     title, description,

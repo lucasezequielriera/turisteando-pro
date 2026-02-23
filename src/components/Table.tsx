@@ -33,7 +33,7 @@ export default function Table({
             <p className="text-slate-300 text-sm mt-1">Desbloquealo para ver toda la lista actualizada.</p>
             <div className="mt-3 flex items-center justify-center gap-2">
               <a
-                href={process.env.NEXT_PUBLIC_STRIPE_LINK_CITY || "#"}
+                href="https://buy.stripe.com/placeholder"
                 className="inline-flex items-center rounded-xl bg-cyan-400 px-3 py-2 font-semibold text-slate-900 hover:bg-cyan-300"
               >
                 Desbloquear ciudad (€5.90)

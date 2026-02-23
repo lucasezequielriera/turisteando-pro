@@ -4,6 +4,9 @@ import Table from "./Table";
 import { City } from "@/data/cities";
 import { hasAllAccess, hasCityAccess, grantAccess } from "@/lib/access";
 import PlacesInfo from "./PlacesInfo";
+import { useCurrency } from "@/contexts/CurrencyContext";
+import { usePaymentModal } from "@/hooks/usePaymentModal";
+import PaymentModal from "./PaymentModal";
 
 type TabKey = "resumen" | "trabajo" | "alojamiento" | "datos" | "presupuesto" | "emergencia";
 
@@ -21,9 +24,31 @@ export default function CityView({ city }: { city: City }) {
   const [accessAll, setAccessAll] = useState(hasAllAccess());
   const [accessCity, setAccessCity] = useState(hasCityAccess(city.slug));
   const locked = !(accessAll || accessCity);
+  const { getDisplayPrice } = useCurrency();
+  const { isOpen, modalData, openModal, closeModal } = usePaymentModal();
 
   const markAll = () => { grantAccess("all"); setAccessAll(true); };
   const markCity = () => { grantAccess("city", city.slug); setAccessCity(true); };
+
+  const handleCityBuyClick = () => {
+    openModal({
+      mode: "city",
+      city: city.slug,
+      title: `Pack Ciudad - ${city.name}`,
+      price: 5.90,
+      description: `Acceso completo a la guía de ${city.name}`
+    });
+  };
+
+  const handleCountryBuyClick = () => {
+    openModal({
+      mode: "country",
+      country: city.country,
+      title: `Pack País - ${city.country}`,
+      price: 12,
+      description: `Desbloquea todas las ciudades de ${city.country}`
+    });
+  };
 
   return (
     <div className="space-y-6">
@@ -36,12 +61,12 @@ export default function CityView({ city }: { city: City }) {
             <p className="text-slate-300 text-sm mt-1">Actualizado: {city.lastUpdated}</p>
           </div>
           <div className="flex items-center gap-2">
-            <a href={`/buy/city/${city.slug}`} className="rounded-xl bg-cyan-400 px-4 py-2 font-semibold text-slate-900 hover:bg-cyan-300">
-              Desbloquear ciudad (€5.90)
-            </a>
-            <a href="/buy/all" className="rounded-xl bg-emerald-400 px-4 py-2 font-semibold text-slate-900 hover:bg-emerald-300">
-              Acceso total (€9/mes)
-            </a>
+            <button onClick={handleCityBuyClick} className="rounded-xl bg-cyan-400 px-4 py-2 font-semibold text-slate-900 hover:bg-cyan-300">
+              Desbloquear ciudad ({getDisplayPrice(5.90)})
+            </button>
+            <button onClick={handleCountryBuyClick} className="rounded-xl bg-emerald-400 px-4 py-2 font-semibold text-slate-900 hover:bg-emerald-300">
+              Desbloquear país ({getDisplayPrice(12)})
+            </button>
             {/* Botones utilitarios para marcar acceso post-checkout */}
             <button onClick={markCity} className="rounded-xl border border-slate-700 px-3 py-2 text-slate-200">Ya compré esta</button>
             <button onClick={markAll} className="rounded-xl border border-emerald-600 px-3 py-2 text-emerald-300">Tengo suscripción</button>
@@ -212,6 +237,20 @@ export default function CityView({ city }: { city: City }) {
             </ul>
           </Section>
         </div>
+      )}
+
+      {/* Payment Modal */}
+      {modalData && (
+        <PaymentModal
+          isOpen={isOpen}
+          onClose={closeModal}
+          mode={modalData.mode}
+          city={modalData.city}
+          country={modalData.country}
+          title={modalData.title}
+          price={modalData.price}
+          description={modalData.description}
+        />
       )}
     </div>
   );
